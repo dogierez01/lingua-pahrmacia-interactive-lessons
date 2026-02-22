@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>English Grammar Campaign</title>
+    <style>
+        /* --- BASE STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000; color: #ffffff; display: flex;
+            justify-content: center; align-items: center; min-height: 100vh;
+            margin: 0; padding: 15px; box-sizing: border-box;
+        }
+
+        .app-screen {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; max-width: 900px;
+            width: 100%; animation: fadeIn 0.4s ease-in;
+        }
+
+        .active-screen { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- SPLASH & MAIN MENU --- */
+        .logo-container {
+            width: 240px; height: 240px; /* Made the logo much bigger! */
+            border-radius: 50%; overflow: hidden;
+            display: flex; justify-content: center; align-items: center; margin-bottom: 30px;
+            background-color: #000;
+            box-shadow: 0 0 15px #00ffff, 0 0 40px #00b7ff, 0 0 80px #00b7ff, inset 0 0 30px #00ffff;
+            border: 4px solid #ffffff; animation: neon-pulse 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes neon-pulse {
+            from { box-shadow: 0 0 15px #00ffff, 0 0 40px #00b7ff, 0 0 80px #00b7ff, inset 0 0 30px #00ffff; }
+            to { box-shadow: 0 0 25px #00ffff, 0 0 60px #00b7ff, 0 0 110px #00b7ff, inset 0 0 45px #00ffff; }
+        }
+
+        .landing-image {
+            max-width: 100%; height: auto; border-radius: 12px; margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 183, 255, 0.3); border: 2px solid #333;
+        }
+
+        .main-menu-header {
+            width: 100%; max-width: 380px; display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px;
+        }
+
+        .reset-btn {
+            background-color: transparent; color: #e74c3c; border: 2px solid #e74c3c;
+            padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; cursor: pointer;
+            font-weight: bold; transition: all 0.2s;
+        }
+        .reset-btn:hover { background-color: #e74c3c; color: #ffffff; }
+        
+        .title-text { font-size: 1.1rem; font-weight: bold; color: #00b7ff; text-transform: uppercase; letter-spacing: 1px;}
+
+        /* --- SCROLLING LESSON DASHBOARD --- */
+        .lesson-list-container {
+            width: 100%; max-width: 380px; max-height: 60vh; overflow-y: auto;
+            padding-right: 10px; margin-bottom: 20px;
+        }
+        
+        .lesson-list-container::-webkit-scrollbar { width: 8px; }
+        .lesson-list-container::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+
+        .test-row {
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: #111; padding: 12px 15px; border-radius: 12px;
+            margin-bottom: 10px; border: 1px solid #333; transition: all 0.3s;
+        }
+
+        .pit-stop-row {
+            background: linear-gradient(45deg, #111 25%, #222 25%, #222 50%, #111 50%, #111 75%, #222 75%, #222 100%);
+            background-size: 20px 20px; border: 2px solid #f1c40f;
+        }
+        .pit-stop-row .lesson-title { color: #f1c40f !important; text-shadow: 1px 1px 2px #000; font-size: 1.2rem;}
+
+        .locked-row { opacity: 0.5; border-color: #222; background-color: #0a0a0a; filter: grayscale(100%);}
+
+        .lesson-title { font-size: 1.1rem; font-weight: bold; color: #fff; white-space: nowrap; display: flex; align-items: center;}
+        
+        .lesson-btns { display: flex; gap: 8px; }
+        
+        .btn-mini {
+            padding: 8px 12px; font-size: 0.85rem; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; text-transform: uppercase; transition: transform 0.1s;
+        }
+        .btn-mini:active:not(:disabled) { transform: scale(0.95); }
+        .btn-quiz { background-color: #1F7A5D; color: white; border: 1px solid #2ecc71;}
+        .btn-voice { background-color: #2980b9; color: white; border: 1px solid #3498db;}
+        
+        .btn-mini:disabled { background-color: #333 !important; border-color: #444 !important; color: #777 !important; cursor: not-allowed; }
+
+        .text-green { color: #2ecc71 !important; }
+        .text-yellow { color: #f1c40f !important; }
+        .text-red { color: #e74c3c !important; }
+
+        .start-btn-main {
+            background-color: #1F7A5D; color: #ffffff; border: 2px solid #ffffff;
+            padding: 12px 20px; font-size: 1.2rem; font-weight: 800; border-radius: 50px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); width: 220px;
+        }
+        .start-btn-main:hover { transform: scale(1.05); background-color: #279672; box-shadow: 0 0 20px #279672; }
+
+        /* --- LOADING SPINNER --- */
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid #00b7ff;
+            border-radius: 50%; animation: spin 1s linear infinite; margin-top: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- MULTIPLE CHOICE UI --- */
+        .quiz-container { background-color: #000000; border: 2px solid #333333; border-radius: 12px; box-shadow: 0 8px 32px rgba(255,255,255,0.05); max-width: 900px; width: 100%; padding: 20px; text-align: center; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .btn-group { display: flex; gap: 8px; }
+        .return-btn, .restart-header-btn { background-color: transparent; color: #ffffff; border: 2px solid #555555; padding: 6px 12px; font-size: 0.7rem; border-radius: 6px; cursor: pointer; }
+        .restart-header-btn { border-color: #e74c3c; color: #e74c3c; }
+        .return-btn:hover { background-color: #333333; border-color: #ffffff; }
+        .restart-header-btn:hover { background-color: #e74c3c; color: white; }
+        .tally { font-size: 1.05rem; font-weight: bold; }
+        .tally-correct { color: #2ecc71; margin-right: 10px; }
+        .tally-incorrect { color: #e74c3c; }
+        h2 { font-size: 1.2rem; line-height: 1.4; min-height: 50px; margin-bottom: 20px; }
+        .progress { font-size: 0.75rem; color: #aaaaaa; margin-bottom: 20px; font-weight: bold; text-transform: uppercase;}
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        button.option-btn { background-color: #111111; border: 2px solid #ffffff; border-radius: 8px; padding: 10px; font-size: 1.05rem; cursor: pointer; text-align: left; color: #ffffff; line-height: 1.3; }
+        button.option-btn.correct { background-color: #2ecc71 !important; border-color: #27ae60 !important; }
+        button.option-btn.incorrect { background-color: #e74c3c !important; border-color: #c0392b !important; }
+        button.option-btn.missed-correct { background-color: #3498db !important; border-color: #2980b9 !important; }
+        .next-btn { margin-top: 20px; background-color: #ffffff; color: #000000; border: none; padding: 12px 20px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; display: none; width: 100%; text-transform: uppercase;}
+
+        /* --- VOICE FLASHCARD UI --- */
+        .flashcard-box { background-color: #050505; border: 3px solid #333; border-radius: 16px; padding: 30px 15px; margin-bottom: 20px; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: inset 0 0 20px rgba(255,255,255,0.05); }
+        .tr-text { color: #ffffff; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; }
+        .en-text { font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; display: none; }
+        .feedback-text { color: #aaaaaa; font-size: 1rem; min-height: 25px; margin-bottom: 15px; font-weight: bold;}
+        .mic-btn { background-color: #e74c3c; color: white; font-size: 2.5rem; width: 80px; height: 80px; border-radius: 50%; border: 4px solid #ffffff; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s; }
+        .mic-btn:hover:not(:disabled) { transform: scale(1.1); background-color: #c0392b; }
+        .mic-btn:disabled { background-color: #555; border-color: #777; cursor: not-allowed; opacity: 0.5; }
+        .mic-pulsing { animation: pulse-mic 1s infinite alternate; background-color: #ff0000 !important; border-color: #ff9999 !important; }
+        .voice-score-display { font-size: 1.3rem; font-weight: bold; color: #00b7ff; }
+        .result-screen h1 { color: #2ecc71; font-size: 1.9rem; margin-bottom: 15px; }
+    </style>
+</head>
+<body class="notranslate">
+
+<div class="app-screen active-screen" id="splash-screen">
+    <div class="logo-container">
+        <h1 style="font-size: 6rem; margin:0;">V2.1</h1>
+    </div>
+    <button class="start-btn-main" onclick="switchScreen('landing-screen')">ENTER</button>
+</div>
+
+<div class="app-screen" id="landing-screen">
+    <img src="landing.png" alt="Campaign Instructions" class="landing-image" onerror="this.style.display='none'; document.getElementById('landing-error').style.display='block';">
+    <div id="landing-error" style="display:none; color:#e74c3c; margin-bottom:20px; font-weight:bold;">
+        Image not found! Please ensure 'landing.png' is uploaded to your GitHub repository.
+    </div>
+    <button class="start-btn-main" onclick="initAndShowMenu()">START CAMPAIGN</button>
+</div>
+
+<div class="app-screen" id="main-menu-screen">
+    <div class="main-menu-header">
+        <button class="reset-btn" onclick="resetAllData()">Wipe Progress</button>
+        <div class="title-text">Campaign Mode</div>
+    </div>
+    
+    <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px; max-width:380px;">
+        * Score at least 60% on a Quiz or Pit Stop to unlock the next level.
+    </div>
+
+    <div class="lesson-list-container" id="dynamic-lesson-list"></div>
+</div>
+
+<div class="app-screen" id="loading-screen">
+    <h2 id="loading-text">Downloading Data...</h2>
+    <div class="spinner"></div>
+</div>
+
+<div class="app-screen quiz-container" id="quiz-box">
+    <div class="header-bar">
+        <div class="btn-group">
+            <button class="return-btn" onclick="showMainMenu()">&#8592; Menu</button>
+            <button class="restart-header-btn" onclick="restartQuizSession()">Restart</button>
+        </div>
+        <div class="tally">
+            <span class="tally-correct" id="tally-correct-display">0 Correct</span>
+            <span class="tally-incorrect" id="tally-incorrect-display">0 Incorrect</span>
+        </div>
+    </div>
+    <div class="progress" id="progress-text">Loading...</div>
+    <h2 id="question-text">Loading...</h2>
+    <div class="options" id="options-container" translate="no"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<div class="app-screen quiz-container" id="voice-box">
+    <div class="header-bar">
+        <button class="return-btn" onclick="quitVoiceChallenge()">&#8592; Quit</button>
+        <div class="voice-score-display">Score: <span id="v-score">0</span></div>
+    </div>
+    <div class="progress" id="v-progress-text">Card 1</div>
+    
+    <div class="flashcard-box" translate="no">
+        <div class="tr-text" id="v-tr-text">Turkish loading...</div>
+        <div class="en-text" id="v-en-text">English</div>
+        <div class="feedback-text" id="v-feedback">Tap the mic and speak!</div>
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎤</button>
+    </div>
+
+    <button class="next-btn" id="v-next-btn" onclick="nextVoiceCard()">Next Card</button>
+</div>
+
+<div class="app-screen quiz-container" id="result-box">
+    <div class="header-bar" style="justify-content: flex-start;">
+        <button class="return-btn" onclick="showMainMenu()">&#8592; Menu</button>
+    </div>
+    <h1 id="result-title">Level Complete!</h1>
+    <h2 id="score-text"></h2>
+    <div id="unlock-message" style="font-size: 1.1rem; margin-bottom: 25px; font-weight: bold;"></div>
+    <button class="start-btn-main" style="margin: 0 auto;" onclick="showMainMenu()">Continue</button>
+</div>
+
+<script>
+    // --- THE CAMPAIGN MAP ---
+    const lessonMap = [
+        '1', '2', '3', '4', 'ps1', 
+        '5', '6', '7', '8', 'ps2', 
+        '9', '10a', '10b', '11', 'ps3', 
+        '12', '13', '14', 'ps4', 
+        '15', '16', '17', 'ps5', 
+        '18', '19', 'ps6'
+    ];
+    
+    const pitStopConfigs = {
+        'ps1': { name: 'PIT STOP 1', covers: ['1','2','3','4'] },
+        'ps2': { name: 'PIT STOP 2', covers: ['1','2','3','4','5','6','7','8'] },
+        'ps3': { name: 'PIT STOP 3', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11'] },
+        'ps4': { name: 'PIT STOP 4', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11','12','13','14'] },
+        'ps5': { name: 'PIT STOP 5', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11','12','13','14','15','16','17'] },
+        'ps6': { name: 'PIT STOP 6', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11','12','13','14','15','16','17','18','19'] }
+    };
+
+    const PASS_THRESHOLD = 0.60; // 60% to unlock next level
+    const PIT_STOP_QUESTIONS = 25;
+
+    const screens = {
+        splash: document.getElementById("splash-screen"),
+        landing: document.getElementById("landing-screen"),
+        menu: document.getElementById("main-menu-screen"),
+        loading: document.getElementById("loading-screen"),
+        quiz: document.getElementById("quiz-box"),
+        voice: document.getElementById("voice-box"),
+        result: document.getElementById("result-box")
+    };
+    
+    function switchScreen(screenKey) {
+        Object.values(screens).forEach(screen => screen.classList.remove('active-screen'));
+        screens[screenKey].classList.add('active-screen');
+    }
+
+    function initAndShowMenu() { showMainMenu(); }
+
+    // --- DASHBOARD BUILDER WITH 60% LOCK LOGIC ---
+    function showMainMenu() {
+        const list = document.getElementById("dynamic-lesson-list");
+        list.innerHTML = ""; 
+        
+        let scores = JSON.parse(localStorage.getItem('grammarQuizScores_v2')) || {};
+        let isUnlocked = true; 
+
+        lessonMap.forEach((lessonId) => {
+            const isPitStop = lessonId.startsWith('ps');
+            
+            let rowClass = "test-row";
+            if (isPitStop) rowClass += " pit-stop-row";
+            if (!isUnlocked) rowClass += " locked-row";
+
+            let scoreText = "";
+            let lessonScoreObj = scores[lessonId];
+            
+            if (lessonScoreObj) {
+                let pct = lessonScoreObj.score / lessonScoreObj.total;
+                let passClass = pct >= PASS_THRESHOLD ? "text-green" : "text-red";
+                scoreText = `<span class="${passClass}" style="font-size:0.85rem; margin-left:12px; font-weight:normal; text-shadow:none;">★ ${lessonScoreObj.score}/${lessonScoreObj.total}</span>`;
+            }
+
+            let lockIcon = isUnlocked ? (isPitStop ? "🏁 " : "") : "🔒 ";
+            let displayTitle = isPitStop ? pitStopConfigs[lessonId].name : `Lesson ${lessonId.toUpperCase()}`;
+            
+            const row = document.createElement("div");
+            row.className = rowClass;
+            row.innerHTML = `
+                <div class="lesson-title">${lockIcon}${displayTitle} ${scoreText}</div>
+                <div class="lesson-btns">
+                    <button class="btn-mini btn-quiz" ${!isUnlocked ? 'disabled' : ''} onclick="startQuiz('${lessonId}')">📝 TEST</button>
+                    <button class="btn-mini btn-voice" ${!isUnlocked ? 'disabled' : ''} onclick="startVoiceChallenge('${lessonId}')">🎤 VOICE</button>
+                </div>
+            `;
+            list.appendChild(row);
+
+            if (!lessonScoreObj || (lessonScoreObj.score / lessonScoreObj.total) < PASS_THRESHOLD) {
+                isUnlocked = false; 
+            }
+        });
+
+        switchScreen('menu');
+    }
+
+    function resetAllData() {
+        if(confirm("Are you sure you want to delete all progress and lock everything again? This cannot be undone!")) {
+            localStorage.clear();
+            location.reload(); 
+        }
+    }
+
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    // --- CSV FETCHER ---
+    function parseCSV(text) {
+        let lines = text.split(/\r?\n/);
+        let result = [];
+        for(let line of lines) {
+            if(!line.trim()) continue;
+            let row = []; let cur = ""; let inQuotes = false;
+            for(let i=0; i<line.length; i++) {
+                let c = line[i];
+                if(inQuotes) {
+                    if(c === '"' && line[i+1] === '"') { cur += '"'; i++; }
+                    else if(c === '"') { inQuotes = false; }
+                    else { cur += c; }
+                } else {
+                    if(c === '"') { inQuotes = true; }
+                    else if(c === ',') { row.push(cur); cur = ""; }
+                    else { cur += c; }
+                }
+            }
+            row.push(cur);
+            result.push(row);
+        }
+        return result;
+    }
+
+    async function fetchRawLessonData(fileId) {
+        const response = await fetch(`lesson${fileId}.csv`);
+        if (!response.ok) throw new Error(`File lesson${fileId}.csv not found`);
+        const text = await response.text();
+        const rows = parseCSV(text);
+        let lessonData = [];
+        for(let i=1; i<rows.length; i++) {
+            if(rows[i].length < 4) continue; 
+            lessonData.push({
+                q: rows[i][0].trim(),
+                options: [rows[i][1].trim(), rows[i][2].trim(), rows[i][3].trim()],
+                answer: 0 
+            });
+        }
+        return lessonData;
+    }
+
+    async function getLevelData(levelId) {
+        try {
+            if (!levelId.startsWith('ps')) {
+                return await fetchRawLessonData(levelId);
+            } else {
+                const lessonsToCover = pitStopConfigs[levelId].covers;
+                const allPromises = lessonsToCover.map(id => fetchRawLessonData(id));
+                const allLessonsData = await Promise.all(allPromises);
+                
+                let finalQuestions = [];
+                let baseCount = Math.floor(PIT_STOP_QUESTIONS / lessonsToCover.length);
+                let remainder = PIT_STOP_QUESTIONS % lessonsToCover.length;
+                
+                let lessonIndices = shuffleArray([...Array(lessonsToCover.length).keys()]);
+
+                for(let i = 0; i < lessonsToCover.length; i++) {
+                    let questionsToTake = baseCount + (lessonIndices[i] < remainder ? 1 : 0);
+                    let randomizedLessonSet = shuffleArray(allLessonsData[i]);
+                    finalQuestions = finalQuestions.concat(randomizedLessonSet.slice(0, questionsToTake));
+                }
+                
+                return shuffleArray(finalQuestions);
+            }
+        } catch (err) {
+            alert(`Error loading data. Make sure all CSV files are correctly named in your GitHub repository!`);
+            return null;
+        }
+    }
+
+    // ==========================================
+    // MULTIPLE CHOICE LOGIC
+    // ==========================================
+    let currentQuizData = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let incorrectCount = 0;
+    let activeLevelId = '1';
+
+    const quizElements = {
+        questionText: document.getElementById("question-text"),
+        optionsContainer: document.getElementById("options-container"),
+        nextBtn: document.getElementById("next-btn"),
+        progressText: document.getElementById("progress-text"),
+        tallyCorrect: document.getElementById("tally-correct-display"),
+        tallyIncorrect: document.getElementById("tally-incorrect-display")
+    };
+
+    async function startQuiz(levelId) {
+        activeLevelId = levelId;
+        switchScreen('loading');
+        
+        const data = await getLevelData(levelId);
+        if(!data || data.length === 0) { showMainMenu(); return; }
+
+        score = 0; incorrectCount = 0; currentQuestionIndex = 0;
+        currentQuizData = shuffleArray(data);
+        
+        updateTallyDisplay();
+        switchScreen('quiz');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        quizElements.nextBtn.style.display = "none";
+        quizElements.optionsContainer.innerHTML = "";
+        const data = currentQuizData[currentQuestionIndex];
+        
+        let titleName = activeLevelId.startsWith('ps') ? pitStopConfigs[activeLevelId].name : `Lesson ${activeLevelId.toUpperCase()}`;
+        quizElements.progressText.textContent = `Q ${currentQuestionIndex + 1} of ${currentQuizData.length} (${titleName})`;
+        quizElements.questionText.textContent = data.q;
+
+        const correct = data.options[data.answer];
+        let options = shuffleArray(data.options);
+
+        options.forEach((opt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn"; btn.id = "btn-" + idx; btn.textContent = opt;
+            const isCorr = (opt === correct);
+            btn.onclick = () => selectAnswer(isCorr, idx, options.indexOf(correct), btn);
+            quizElements.optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectAnswer(isCorrect, selectedIndex, newCorrectIndex, btn) {
+        document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+        if (isCorrect) { btn.classList.add("correct"); score++; } 
+        else {
+            btn.classList.add("incorrect"); incorrectCount++;
+            document.getElementById("btn-" + newCorrectIndex).classList.add("missed-correct");
+        }
+        updateTallyDisplay(); 
+        quizElements.nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuizData.length) {
+            loadQuestion();
+        } else {
+            let scores = JSON.parse(localStorage.getItem('grammarQuizScores_v2')) || {};
+            
+            if (!scores[activeLevelId] || score > scores[activeLevelId].score) {
+                scores[activeLevelId] = { score: score, total: currentQuizData.length };
+                localStorage.setItem('grammarQuizScores_v2', JSON.stringify(scores));
+            }
+
+            let pct = score / currentQuizData.length;
+            let msgEl = document.getElementById('unlock-message');
+            
+            if (pct >= PASS_THRESHOLD) {
+                document.getElementById('result-title').textContent = activeLevelId.startsWith('ps') ? "Boss Defeated! 🏁" : "Lesson Passed! 🎉";
+                document.getElementById('result-title').style.color = "#2ecc71";
+                msgEl.textContent = "Great job! The next level is unlocked.";
+                msgEl.className = "text-green";
+            } else {
+                document.getElementById('result-title').textContent = "Failed ❌";
+                document.getElementById('result-title').style.color = "#e74c3c";
+                msgEl.textContent = `You need 60% to advance. Keep practicing!`;
+                msgEl.className = "text-red";
+            }
+            
+            switchScreen('result');
+            document.getElementById('score-text').textContent = `Score: ${score} / ${currentQuizData.length}`;
+        }
+    }
+
+    function updateTallyDisplay() {
+        quizElements.tallyCorrect.textContent = `${score} Correct`;
+        quizElements.tallyIncorrect.textContent = `${incorrectCount} Incorrect`;
+    }
+
+    function restartQuizSession() {
+        if(confirm("This will restart the test. Are you sure?")) startQuiz(activeLevelId);
+    }
+
+    // ==========================================
+    // VOICE CHALLENGE LOGIC 
+    // ==========================================
+    let voiceData = [];
+    let vIndex = 0;
+    let vScore = 0;
+    let vAttempts = 0;
+    let isListening = false;
+    let activeVoiceLevelId = '1';
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US'; 
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => { checkVoiceAnswer(event.results[0][0].transcript); };
+        recognition.onspeechend = () => { stopMicAnimation(); };
+        recognition.onerror = (event) => {
+            stopMicAnimation();
+            if(event.error === 'aborted') {
+                document.getElementById('v-feedback').textContent = "Microphone stopped.";
+                document.getElementById('v-feedback').style.color = "#aaaaaa";
+            } else {
+                document.getElementById('v-feedback').textContent = "Could not hear you. Try again!";
+                document.getElementById('v-feedback').style.color = "#e74c3c";
+            }
+        };
+    }
+
+    async function startVoiceChallenge(levelId) {
+        if (!SpeechRecognition) {
+            alert("Your browser does not support Voice Recognition. Please use Google Chrome or Safari.");
+            return;
+        }
+        switchScreen('loading');
+        const data = await getLevelData(levelId);
+        if(!data || data.length === 0) { showMainMenu(); return; }
+
+        activeVoiceLevelId = levelId; vScore = 0; vIndex = 0;
+        document.getElementById('v-score').textContent = vScore;
+        voiceData = shuffleArray(data);
+        switchScreen('voice');
+        loadVoiceCard();
+    }
+
+    function loadVoiceCard() {
+        vAttempts = 0;
+        let titleName = activeVoiceLevelId.startsWith('ps') ? pitStopConfigs[activeVoiceLevelId].name : `Lesson ${activeVoiceLevelId.toUpperCase()}`;
+        document.getElementById('v-progress-text').textContent = `Card ${vIndex + 1} of ${voiceData.length} (Voice: ${titleName})`;
+        document.getElementById('v-tr-text').textContent = voiceData[vIndex].q;
+        const enTextEl = document.getElementById('v-en-text');
+        enTextEl.style.display = "none"; enTextEl.className = "en-text"; 
+        
+        const feedbackEl = document.getElementById('v-feedback');
+        feedbackEl.textContent = "Tap the mic and speak!"; feedbackEl.style.color = "#aaaaaa";
+        
+        document.getElementById('mic-btn').disabled = false;
+        document.getElementById('v-next-btn').style.display = "none";
+    }
+
+    function toggleMic() {
+        if (isListening) { recognition.stop(); stopMicAnimation(); return; }
+        isListening = true;
+        document.getElementById('mic-btn').classList.add('mic-pulsing');
+        document.getElementById('v-feedback').textContent = "Listening...";
+        document.getElementById('v-feedback').style.color = "#00b7ff";
+        recognition.start();
+    }
+
+    function stopMicAnimation() {
+        isListening = false;
+        document.getElementById('mic-btn').classList.remove('mic-pulsing');
+    }
+
+    function quitVoiceChallenge() {
+        if (isListening && recognition) { recognition.stop(); stopMicAnimation(); }
+        showMainMenu();
+    }
+
+    // --- LENIENCY ENGINE ---
+    function normalizeText(str) {
+        let s = str.toLowerCase();
+        const contractions = {
+            "i'll": "i will", "you'll": "you will", "he'll": "he will", "she'll": "she will", "we'll": "we will", "they'll": "they will",
+            "i'm": "i am", "you're": "you are", "we're": "we are", "they're": "they are",
+            "didn't": "did not", "hadn't": "had not", "couldn't": "could not", "can't": "cannot",
+            "don't": "do not", "doesn't": "does not", "isn't": "is not", "aren't": "are not",
+            "wasn't": "was not", "weren't": "were not", "haven't": "have not", "hasn't": "has not",
+            "won't": "will not", "wouldn't": "would not"
+        };
+        for (let key in contractions) { s = s.replace(new RegExp("\\b" + key + "\\b", "g"), contractions[key]); }
+        s = s.replace(/[.,?!'’"‑-]/g, "");
+        const synonyms = {
+            "vacation": "holiday", "movie": "film", "test": "exam", "mistake": "error", "sick": "ill",
+            "mad": "angry", "cab": "taxi", "cash": "money", "repair": "fix", "correct": "fix", 
+            "complete": "finish", "in order to": "to" 
+        };
+        for (let key in synonyms) { s = s.replace(new RegExp("\\b" + key + "\\b", "g"), synonyms[key]); }
+        s = s.replace(/\b(a|an|the|this|that|these|those)\b/g, "");
+        s = s.replace(/\b(in|on|at)\b/g, "in");
+        return s.replace(/\s+/g, " ").trim();
+    }
+
+    function checkVoiceAnswer(spokenText) {
+        vAttempts++;
+        const targetText = voiceData[vIndex].options[voiceData[vIndex].answer];
+        const cleanedSpoken = normalizeText(spokenText);
+        const cleanedTarget = normalizeText(targetText);
+        
+        const feedbackEl = document.getElementById('v-feedback');
+        const enTextEl = document.getElementById('v-en-text');
+        const micBtn = document.getElementById('mic-btn');
+        const nextBtn = document.getElementById('v-next-btn');
+
+        if (cleanedSpoken === cleanedTarget) {
+            enTextEl.textContent = targetText; enTextEl.style.display = "block";
+            enTextEl.classList.add("text-green"); micBtn.disabled = true; nextBtn.style.display = "block";
+            if (vAttempts === 1) {
+                feedbackEl.innerHTML = "🎳 STRIKE! +20 pts"; feedbackEl.style.color = "#2ecc71"; vScore += 20;
+            } else {
+                feedbackEl.innerHTML = "🎳 SPARE! +15 pts"; feedbackEl.style.color = "#2ecc71"; vScore += 15;
+            }
+            document.getElementById('v-score').textContent = vScore;
+        } else {
+            if (vAttempts === 1) {
+                feedbackEl.textContent = `You said: "${spokenText}". Missed! Try one more time.`;
+                feedbackEl.style.color = "#e74c3c";
+            } else {
+                feedbackEl.textContent = `You said: "${spokenText}". Failed!`;
+                feedbackEl.style.color = "#e74c3c";
+                enTextEl.textContent = targetText; enTextEl.style.display = "block";
+                enTextEl.classList.add("text-yellow"); micBtn.disabled = true; nextBtn.style.display = "block";
+            }
+        }
+    }
+
+    function nextVoiceCard() {
+        vIndex++;
+        if (vIndex < voiceData.length) { loadVoiceCard(); } 
+        else {
+            switchScreen('result');
+            let titleName = activeVoiceLevelId.startsWith('ps') ? pitStopConfigs[activeVoiceLevelId].name : `Lesson ${activeVoiceLevelId.toUpperCase()}`;
+            document.getElementById('result-title').textContent = `${titleName} Voice Complete!`;
+            document.getElementById('result-title').style.color = "#00b7ff";
+            document.getElementById('score-text').textContent = `Total Score: ${vScore}`;
+            document.getElementById('unlock-message').textContent = "";
+        }
+    }
+</script>
+</body>
+</html>
