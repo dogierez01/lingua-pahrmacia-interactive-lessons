@@ -20,8 +20,7 @@
             width: 100%; animation: fadeIn 0.4s ease-in;
         }
 
-        /* THIS CLASS FORCES THE SCREEN TO SHOW */
-        .active-screen { display: flex !important; }
+        .active-screen { display: flex; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
@@ -204,4 +203,458 @@
 
 <div class="app-screen quiz-container" id="voice-box">
     <div class="header-bar">
-        <button class="return-btn" onclick="quitVoiceChallenge()">&#8592
+        <button class="return-btn" onclick="quitVoiceChallenge()">&#8592; Quit</button>
+        <div class="voice-score-display">Score: <span id="v-score">0</span></div>
+    </div>
+    <div class="progress" id="v-progress-text">Card 1</div>
+    
+    <div class="flashcard-box" translate="no">
+        <div class="tr-text" id="v-tr-text">Turkish loading...</div>
+        <div class="en-text" id="v-en-text">English</div>
+        <div class="feedback-text" id="v-feedback">Tap the mic and speak!</div>
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎤</button>
+    </div>
+
+    <button class="next-btn" id="v-next-btn" onclick="nextVoiceCard()">Next Card</button>
+</div>
+
+<div class="app-screen quiz-container" id="result-box">
+    <div class="header-bar" style="justify-content: flex-start;">
+        <button class="return-btn" onclick="showMainMenu()">&#8592; Menu</button>
+    </div>
+    <h1 id="result-title">Level Complete!</h1>
+    <h2 id="score-text"></h2>
+    <div id="unlock-message" style="font-size: 1.1rem; margin-bottom: 25px; font-weight: bold;"></div>
+    <button class="start-btn-main" style="margin: 0 auto;" onclick="showMainMenu()">Continue</button>
+</div>
+
+<script>
+    function hideAllScreens() {
+        const screens = [
+            'splash-screen', 'landing-screen', 'main-menu-screen', 
+            'loading-screen', 'quiz-box', 'voice-box', 'result-box'
+        ];
+        screens.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = 'none';
+            }
+        });
+    }
+
+    function showScreen(screenId) {
+        hideAllScreens();
+        const element = document.getElementById(screenId);
+        if (element) {
+            element.style.display = 'flex';
+        }
+    }
+
+    const lessonMap = [
+        '1', '2', '3', '4', 'ps1', 
+        '5', '6', '7', '8', 'ps2', 
+        '9', '10a', '10b', '11', 'ps3', 
+        '12', '13', '14', 'ps4', 
+        '15', '16', '17', 'ps5', 
+        '18', '19', 'ps6'
+    ];
+    
+    const pitStopConfigs = {
+        'ps1': { name: 'PIT STOP 1', covers: ['1','2','3','4'] },
+        'ps2': { name: 'PIT STOP 2', covers: ['1','2','3','4','5','6','7','8'] },
+        'ps3': { name: 'PIT STOP 3', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11'] },
+        'ps4': { name: 'PIT STOP 4', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11','12','13','14'] },
+        'ps5': { name: 'PIT STOP 5', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11','12','13','14','15','16','17'] },
+        'ps6': { name: 'PIT STOP 6', covers: ['1','2','3','4','5','6','7','8','9','10a','10b','11','12','13','14','15','16','17','18','19'] }
+    };
+
+    const PASS_THRESHOLD = 0.60; 
+    const PIT_STOP_QUESTIONS = 25;
+
+    function initAndShowMenu() { showMainMenu(); }
+
+    function showMainMenu() {
+        const list = document.getElementById("dynamic-lesson-list");
+        list.innerHTML = ""; 
+        
+        let scores = JSON.parse(localStorage.getItem('grammarQuizScores_v2')) || {};
+        let isUnlocked = true; 
+
+        lessonMap.forEach((lessonId) => {
+            const isPitStop = lessonId.startsWith('ps');
+            
+            let rowClass = "test-row";
+            if (isPitStop) rowClass += " pit-stop-row";
+            if (!isUnlocked) rowClass += " locked-row";
+
+            let scoreText = "";
+            let lessonScoreObj = scores[lessonId];
+            
+            if (lessonScoreObj) {
+                let pct = lessonScoreObj.score / lessonScoreObj.total;
+                let passClass = pct >= PASS_THRESHOLD ? "text-green" : "text-red";
+                scoreText = `<span class="${passClass}" style="font-size:0.85rem; margin-left:12px; font-weight:normal; text-shadow:none;">★ ${lessonScoreObj.score}/${lessonScoreObj.total}</span>`;
+            }
+
+            let lockIcon = isUnlocked ? (isPitStop ? "🏁 " : "") : "🔒 ";
+            let displayTitle = isPitStop ? pitStopConfigs[lessonId].name : `Lesson ${lessonId.toUpperCase()}`;
+            
+            const row = document.createElement("div");
+            row.className = rowClass;
+            row.innerHTML = `
+                <div class="lesson-title">${lockIcon}${displayTitle} ${scoreText}</div>
+                <div class="lesson-btns">
+                    <button class="btn-mini btn-quiz" ${!isUnlocked ? 'disabled' : ''} onclick="startQuiz('${lessonId}')">📝 TEST</button>
+                    <button class="btn-mini btn-voice" ${!isUnlocked ? 'disabled' : ''} onclick="startVoiceChallenge('${lessonId}')">🎤 VOICE</button>
+                </div>
+            `;
+            list.appendChild(row);
+
+            if (!lessonScoreObj || (lessonScoreObj.score / lessonScoreObj.total) < PASS_THRESHOLD) {
+                isUnlocked = false; 
+            }
+        });
+
+        showScreen('main-menu-screen');
+    }
+
+    function resetAllData() {
+        if(confirm("Are you sure you want to delete all progress and lock everything again? This cannot be undone!")) {
+            localStorage.clear();
+            location.reload(); 
+        }
+    }
+
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    function parseCSV(text) {
+        let lines = text.split(/\r?\n/);
+        let result = [];
+        for(let line of lines) {
+            if(!line.trim()) continue;
+            let row = []; let cur = ""; let inQuotes = false;
+            for(let i=0; i<line.length; i++) {
+                let c = line[i];
+                if(inQuotes) {
+                    if(c === '"' && line[i+1] === '"') { cur += '"'; i++; }
+                    else if(c === '"') { inQuotes = false; }
+                    else { cur += c; }
+                } else {
+                    if(c === '"') { inQuotes = true; }
+                    else if(c === ',') { row.push(cur); cur = ""; }
+                    else { cur += c; }
+                }
+            }
+            row.push(cur);
+            result.push(row);
+        }
+        return result;
+    }
+
+    async function fetchRawLessonData(fileId) {
+        const response = await fetch(`lesson${fileId}.csv`);
+        if (!response.ok) throw new Error(`File lesson${fileId}.csv not found`);
+        const text = await response.text();
+        const rows = parseCSV(text);
+        let lessonData = [];
+        for(let i=1; i<rows.length; i++) {
+            if(rows[i].length < 4) continue; 
+            lessonData.push({
+                q: rows[i][0].trim(),
+                options: [rows[i][1].trim(), rows[i][2].trim(), rows[i][3].trim()],
+                answer: 0 
+            });
+        }
+        return lessonData;
+    }
+
+    async function getLevelData(levelId) {
+        try {
+            if (!levelId.startsWith('ps')) {
+                return await fetchRawLessonData(levelId);
+            } else {
+                const lessonsToCover = pitStopConfigs[levelId].covers;
+                const allPromises = lessonsToCover.map(id => fetchRawLessonData(id));
+                const allLessonsData = await Promise.all(allPromises);
+                
+                let finalQuestions = [];
+                let baseCount = Math.floor(PIT_STOP_QUESTIONS / lessonsToCover.length);
+                let remainder = PIT_STOP_QUESTIONS % lessonsToCover.length;
+                
+                let lessonIndices = shuffleArray([...Array(lessonsToCover.length).keys()]);
+
+                for(let i = 0; i < lessonsToCover.length; i++) {
+                    let questionsToTake = baseCount + (lessonIndices[i] < remainder ? 1 : 0);
+                    let randomizedLessonSet = shuffleArray(allLessonsData[i]);
+                    finalQuestions = finalQuestions.concat(randomizedLessonSet.slice(0, questionsToTake));
+                }
+                
+                return shuffleArray(finalQuestions);
+            }
+        } catch (err) {
+            alert(`Error loading data. Make sure all CSV files are correctly named in your GitHub repository!`);
+            return null;
+        }
+    }
+
+    let currentQuizData = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let incorrectCount = 0;
+    let activeLevelId = '1';
+
+    const quizElements = {
+        questionText: document.getElementById("question-text"),
+        optionsContainer: document.getElementById("options-container"),
+        nextBtn: document.getElementById("next-btn"),
+        progressText: document.getElementById("progress-text"),
+        tallyCorrect: document.getElementById("tally-correct-display"),
+        tallyIncorrect: document.getElementById("tally-incorrect-display")
+    };
+
+    async function startQuiz(levelId) {
+        activeLevelId = levelId;
+        showScreen('loading-screen');
+        
+        const data = await getLevelData(levelId);
+        if(!data || data.length === 0) { showMainMenu(); return; }
+
+        score = 0; incorrectCount = 0; currentQuestionIndex = 0;
+        currentQuizData = shuffleArray(data);
+        
+        updateTallyDisplay();
+        showScreen('quiz-box');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        quizElements.nextBtn.style.display = "none";
+        quizElements.optionsContainer.innerHTML = "";
+        const data = currentQuizData[currentQuestionIndex];
+        
+        let titleName = activeLevelId.startsWith('ps') ? pitStopConfigs[activeLevelId].name : `Lesson ${activeLevelId.toUpperCase()}`;
+        quizElements.progressText.textContent = `Q ${currentQuestionIndex + 1} of ${currentQuizData.length} (${titleName})`;
+        quizElements.questionText.textContent = data.q;
+
+        const correct = data.options[data.answer];
+        let options = shuffleArray(data.options);
+
+        options.forEach((opt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn"; btn.id = "btn-" + idx; btn.textContent = opt;
+            const isCorr = (opt === correct);
+            btn.onclick = () => selectAnswer(isCorr, idx, options.indexOf(correct), btn);
+            quizElements.optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectAnswer(isCorrect, selectedIndex, newCorrectIndex, btn) {
+        document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+        if (isCorrect) { btn.classList.add("correct"); score++; } 
+        else {
+            btn.classList.add("incorrect"); incorrectCount++;
+            document.getElementById("btn-" + newCorrectIndex).classList.add("missed-correct");
+        }
+        updateTallyDisplay(); 
+        quizElements.nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuizData.length) {
+            loadQuestion();
+        } else {
+            let scores = JSON.parse(localStorage.getItem('grammarQuizScores_v2')) || {};
+            
+            if (!scores[activeLevelId] || score > scores[activeLevelId].score) {
+                scores[activeLevelId] = { score: score, total: currentQuizData.length };
+                localStorage.setItem('grammarQuizScores_v2', JSON.stringify(scores));
+            }
+
+            let pct = score / currentQuizData.length;
+            let msgEl = document.getElementById('unlock-message');
+            
+            if (pct >= PASS_THRESHOLD) {
+                document.getElementById('result-title').textContent = activeLevelId.startsWith('ps') ? "Boss Defeated! 🏁" : "Lesson Passed! 🎉";
+                document.getElementById('result-title').style.color = "#2ecc71";
+                msgEl.textContent = "Great job! The next level is unlocked.";
+                msgEl.className = "text-green";
+            } else {
+                document.getElementById('result-title').textContent = "Failed ❌";
+                document.getElementById('result-title').style.color = "#e74c3c";
+                msgEl.textContent = `You need 60% to advance. Keep practicing!`;
+                msgEl.className = "text-red";
+            }
+            
+            showScreen('result-box');
+            document.getElementById('score-text').textContent = `Score: ${score} / ${currentQuizData.length}`;
+        }
+    }
+
+    function updateTallyDisplay() {
+        quizElements.tallyCorrect.textContent = `${score} Correct`;
+        quizElements.tallyIncorrect.textContent = `${incorrectCount} Incorrect`;
+    }
+
+    function restartQuizSession() {
+        if(confirm("This will restart the test. Are you sure?")) startQuiz(activeLevelId);
+    }
+
+    let voiceData = [];
+    let vIndex = 0;
+    let vScore = 0;
+    let vAttempts = 0;
+    let isListening = false;
+    let activeVoiceLevelId = '1';
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US'; 
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => { checkVoiceAnswer(event.results[0][0].transcript); };
+        recognition.onspeechend = () => { stopMicAnimation(); };
+        recognition.onerror = (event) => {
+            stopMicAnimation();
+            if(event.error === 'aborted') {
+                document.getElementById('v-feedback').textContent = "Microphone stopped.";
+                document.getElementById('v-feedback').style.color = "#aaaaaa";
+            } else {
+                document.getElementById('v-feedback').textContent = "Could not hear you. Try again!";
+                document.getElementById('v-feedback').style.color = "#e74c3c";
+            }
+        };
+    }
+
+    async function startVoiceChallenge(levelId) {
+        if (!SpeechRecognition) {
+            alert("Your browser does not support Voice Recognition. Please use Google Chrome or Safari.");
+            return;
+        }
+        showScreen('loading-screen');
+        const data = await getLevelData(levelId);
+        if(!data || data.length === 0) { showMainMenu(); return; }
+
+        activeVoiceLevelId = levelId; vScore = 0; vIndex = 0;
+        document.getElementById('v-score').textContent = vScore;
+        voiceData = shuffleArray(data);
+        showScreen('voice-box');
+        loadVoiceCard();
+    }
+
+    function loadVoiceCard() {
+        vAttempts = 0;
+        let titleName = activeVoiceLevelId.startsWith('ps') ? pitStopConfigs[activeVoiceLevelId].name : `Lesson ${activeVoiceLevelId.toUpperCase()}`;
+        document.getElementById('v-progress-text').textContent = `Card ${vIndex + 1} of ${voiceData.length} (Voice: ${titleName})`;
+        document.getElementById('v-tr-text').textContent = voiceData[vIndex].q;
+        const enTextEl = document.getElementById('v-en-text');
+        enTextEl.style.display = "none"; enTextEl.className = "en-text"; 
+        
+        const feedbackEl = document.getElementById('v-feedback');
+        feedbackEl.textContent = "Tap the mic and speak!"; feedbackEl.style.color = "#aaaaaa";
+        
+        document.getElementById('mic-btn').disabled = false;
+        document.getElementById('v-next-btn').style.display = "none";
+    }
+
+    function toggleMic() {
+        if (isListening) { recognition.stop(); stopMicAnimation(); return; }
+        isListening = true;
+        document.getElementById('mic-btn').classList.add('mic-pulsing');
+        document.getElementById('v-feedback').textContent = "Listening...";
+        document.getElementById('v-feedback').style.color = "#00b7ff";
+        recognition.start();
+    }
+
+    function stopMicAnimation() {
+        isListening = false;
+        document.getElementById('mic-btn').classList.remove('mic-pulsing');
+    }
+
+    function quitVoiceChallenge() {
+        if (isListening && recognition) { recognition.stop(); stopMicAnimation(); }
+        showMainMenu();
+    }
+
+    function normalizeText(str) {
+        let s = str.toLowerCase();
+        const contractions = {
+            "i'll": "i will", "you'll": "you will", "he'll": "he will", "she'll": "she will", "we'll": "we will", "they'll": "they will",
+            "i'm": "i am", "you're": "you are", "we're": "we are", "they're": "they are",
+            "didn't": "did not", "hadn't": "had not", "couldn't": "could not", "can't": "cannot",
+            "don't": "do not", "doesn't": "does not", "isn't": "is not", "aren't": "are not",
+            "wasn't": "was not", "weren't": "were not", "haven't": "have not", "hasn't": "has not",
+            "won't": "will not", "wouldn't": "would not"
+        };
+        for (let key in contractions) { s = s.replace(new RegExp("\\b" + key + "\\b", "g"), contractions[key]); }
+        s = s.replace(/[.,?!'’"‑-]/g, "");
+        const synonyms = {
+            "vacation": "holiday", "movie": "film", "test": "exam", "mistake": "error", "sick": "ill",
+            "mad": "angry", "cab": "taxi", "cash": "money", "repair": "fix", "correct": "fix", 
+            "complete": "finish", "in order to": "to" 
+        };
+        for (let key in synonyms) { s = s.replace(new RegExp("\\b" + key + "\\b", "g"), synonyms[key]); }
+        s = s.replace(/\b(a|an|the|this|that|these|those)\b/g, "");
+        s = s.replace(/\b(in|on|at)\b/g, "in");
+        return s.replace(/\s+/g, " ").trim();
+    }
+
+    function checkVoiceAnswer(spokenText) {
+        vAttempts++;
+        const targetText = voiceData[vIndex].options[voiceData[vIndex].answer];
+        const cleanedSpoken = normalizeText(spokenText);
+        const cleanedTarget = normalizeText(targetText);
+        
+        const feedbackEl = document.getElementById('v-feedback');
+        const enTextEl = document.getElementById('v-en-text');
+        const micBtn = document.getElementById('mic-btn');
+        const nextBtn = document.getElementById('v-next-btn');
+
+        if (cleanedSpoken === cleanedTarget) {
+            enTextEl.textContent = targetText; enTextEl.style.display = "block";
+            enTextEl.classList.add("text-green"); micBtn.disabled = true; nextBtn.style.display = "block";
+            if (vAttempts === 1) {
+                feedbackEl.innerHTML = "🎳 STRIKE! +20 pts"; feedbackEl.style.color = "#2ecc71"; vScore += 20;
+            } else {
+                feedbackEl.innerHTML = "🎳 SPARE! +15 pts"; feedbackEl.style.color = "#2ecc71"; vScore += 15;
+            }
+            document.getElementById('v-score').textContent = vScore;
+        } else {
+            if (vAttempts === 1) {
+                feedbackEl.textContent = `You said: "${spokenText}". Missed! Try one more time.`;
+                feedbackEl.style.color = "#e74c3c";
+            } else {
+                feedbackEl.textContent = `You said: "${spokenText}". Failed!`;
+                feedbackEl.style.color = "#e74c3c";
+                enTextEl.textContent = targetText; enTextEl.style.display = "block";
+                enTextEl.classList.add("text-yellow"); micBtn.disabled = true; nextBtn.style.display = "block";
+            }
+        }
+    }
+
+    function nextVoiceCard() {
+        vIndex++;
+        if (vIndex < voiceData.length) { loadVoiceCard(); } 
+        else {
+            showScreen('result-box');
+            let titleName = activeVoiceLevelId.startsWith('ps') ? pitStopConfigs[activeVoiceLevelId].name : `Lesson ${activeVoiceLevelId.toUpperCase()}`;
+            document.getElementById('result-title').textContent = `${titleName} Voice Complete!`;
+            document.getElementById('result-title').style.color = "#00b7ff";
+            document.getElementById('score-text').textContent = `Total Score: ${vScore}`;
+            document.getElementById('unlock-message').textContent = "";
+        }
+    }
+</script>
+</body>
+</html>
