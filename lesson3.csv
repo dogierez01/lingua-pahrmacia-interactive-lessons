@@ -1,19 +1,21 @@
-Turkish,Correct English,Fake Option 1,Fake Option 2
-Hiç süt yok.,There isn't milk,It isn't milk,They isn't milk
-Hiç paramız yok.,We don't have money,We aren't have money,We doesn't have money
-Zamanı olmayacak.,She won't have time,She don't have time,She hasn't time
-Bir kaza oldu.,There was (an) accident,It was an accident,They had an accident
-Hiç ışık yoktu.,There wasn't light,It wasn't light,There didn't light
-Bir toplantı olacak.,There will be (a) meeting,It will be a meeting,They will have meeting
-Paraları vardı.,They had money,They have money,They was have money
-Hiç kahve var mı?,Is there coffee?,Is it coffee?,Are there coffee?
-Hiç çay var mıydı?,Was there tea?,Was it tea?,Were there tea?
-Bir toplantı olacak mı?,Will there be (a) meeting?,Will it be a meeting?,Do there be a meeting?
-Müşterilerimiz var.,We have customers,We having customers,We are have customers
-Arabası vardı.,She had (a) car,She has a car,She did had a car
-Hiç zamanın olmayacak.,You won't have time,You don't have time,You aren't have time
-Hiç kahven yoktu.,You didn't have coffee,You don't have coffee,You wasn't have coffee
-Bir sorunumuz vardı.,We had (a) problem,We have a problem,We did had a problem
-Arabalar olacak.,There will be cars,It will be cars,There are will be cars
-Araban var mı?,Do you have (a) car?,Are you have a car?,Have you a car?
-Evi yoktu.,She didn't have (a) house,She doesn't have a house,She wasn't have a house
+"Question","Correct Answer","Wrong 1","Wrong 2"
+"Süt yok.","There isn't milk","It isn't milk","They isn't milk"
+"Paramız yok.","We don't have money","We aren't have money","We doesn't have money"
+"Zamanı olmayacak.","She won't have time","She don't have time","She hasn't time"
+"Bir kaza vardı.","There was an accident","It was an accident","They had an accident"
+"Işık yoktu.","There wasn't light","It wasn't light","There didn't light"
+"Bir toplantı olacak.","There will be a meeting","It will be a meeting","They will have meeting"
+"Paraları vardı.","They had money","They have money","They was have money"
+"Kahve var mı?","Is there coffee?","Is it coffee?","Are there coffee?"
+"Çay var mıydı?","Was there tea?","Was it tea?","Were there tea?"
+"Toplantı olacak mı?","Will there be a meeting?","Will it be a meeting?","Do there be a meeting?"
+"Müşterilerimiz var.","We have customers","We having customers","We are have customers"
+"Arabası vardı.","She had a car","She has a car","She did had a car"
+"Zamanın olmayacak.","You won't have time","You don't have time","You aren't have time"
+"Kahven yoktu.","You didn't have coffee","You don't have coffee","You wasn't have coffee"
+"Bir sorunumuz vardı.","We had a problem","We have a problem","We did had a problem"
+"Arabalar olacak.","There will be cars","It will be cars","There are will be cars"
+"Araban var mı?","Do you have a car?","Are you have a car?","Have you a car?"
+"Evi yoktu.","She didn't have a house","She doesn't have a house","She wasn't have a house"
+"Anahtarımız yoktu.","We didn't have a key","We don't have a key","We weren't have a key"
+"Sorun var mı?","Is there a problem?","Is it a problem?","Does there a problem?"
