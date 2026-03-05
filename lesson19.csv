@@ -1,21 +1,21 @@
-Turkish,Correct English,Fake Option 1,Fake Option 2
-Doktor sabahtan beri kan testini inceliyor.,The doctor has been examining the blood test since morning.,The doctor has been examining the blood test since morning. isn't it?,The doctor has been examining a blood test since morning.
-Şoförün arabayı buraya park etmesi yasak.,The driver isn't allowed to park the car here.,The driver isn't allowed to park a car here.,The driver isn't allowed to park the car here. isn't it?
-Polis saatlerdir trafiği durduruyor mu?,Have the police been stopping the traffic for hours?,Have a police been stopping a traffic for hours?,Have the police been stopping the traffic for hours isn't it?
-Hemşirenin erken çıkması serbestti.,The nurse was allowed to leave early.,The nurse is allowed to leave early.,The nurse were allowed to leave early.
-Bankacı haftalardır para saymıyor.,The banker hasn't been counting money for weeks.,The banker hasn't been counting money for weeks.,The banker hasn't been counting money for weeks. isn't it?
-Pilotun o havada uçağı uçurması yasaktı.,The pilot wasn't allowed to fly the plane in that weather.,The pilot wasn't allowed to fly a plane in that weather.,The pilot wasn't allowed to fly the plane in that weather. isn't it?
-Teknisyen dünden beri modemi tamir ediyor mu?,Has the technician been repairing the modem since yesterday?,Has a technician been repairing a modem since yesterday?,Has the technician been repairing the modem since yesterday isn't it?
-Doktorun hastayı muayene etmesi serbest olacak.,The doctor will be allowed to examine the patient.,The doctor will to be allowed to examine the patient.,The doctor are going be allowed to examine the patient.
-Öğrenciler aylardır kitap okumuyor.,The students haven't been reading books for months.,The students haven't been reading books for months.,The students haven't been reading books for months. isn't it?
-Bankacının o parayı alması yasak olacak.,The banker won't be allowed to take that money.,The banker don't be allowed to take that money.,The banker willn't be allowed to take that money.
-Hemşire iki saattir odayı temizliyor.,The nurse has been cleaning the room for two hours.,The nurse has been cleaning the room for two hours. isn't it?,The nurse has been cleaning a room for two hours.
-Öğrencilerin koridorda beklemesi serbest.,The students are allowed to wait in the corridor.,The students are allowed to wait in the corridor. isn't it?,The students is allowed to wait in the corridor.
-Avukat günlerdir arabasını satmaya çalışıyor mu?,Has the lawyer been trying to sell his car for days?,Has the lawyer been trying to sell his car for days isn't it?,Has a lawyer been trying to sell his car for days?
-Köpeğin hastaneye girmesi yasak.,The dog isn't allowed to enter the hospital.,The dog isn't allowed to enter a hospital.,The dog isn't allowed to enter the hospital. isn't it?
-Patron saatlerdir epey çılgın davranıyor.,The boss has been acting quite crazy for hours.,The boss has been acting quite crazy for hours. isn't it?,The boss has been acting quite crazy for hours.
-Polisin hastaneyi araması serbest miydi?,Were the police allowed to call the hospital?,Were a police allowed to call a hospital?,Were the police allowed to call the hospital isn't it?
-Şoför günlerdir arabayı yıkamıyor.,The driver hasn't been washing the car for days.,The driver hasn't been washing a car for days.,The driver hasn't been washing the car for days. isn't it?
-Avukatın şifreyi değiştirmesi serbest olacak mı?,Will the lawyer be allowed to change the password?,Do the lawyer be allowed to change the password?,Are the lawyer be allowed to change the password?
-Pilot sabahtan beri uçağı kontrol ediyor.,The pilot has been checking the plane since morning.,The pilot has been checking a plane since morning.,The pilot has been checking the plane since morning. isn't it?
-Öğretmenin o kitabı okuması serbestti.,The teacher was allowed to read that book.,The teacher is allowed to read that book.,The teacher were allowed to read that book.
+"Question","Correct Answer","Wrong 1","Wrong 2"
+"Doktor sabahtan beri kan testini inceliyor.","The doctor has been examining the blood test since morning.","The doctor have been examining the blood test since morning.","The doctor has been examine the blood test since morning."
+"Şoförün arabayı buraya park etmesi yasak.","The driver isn't allowed to park the car here.","The driver aren't allowed to park the car here.","The driver isn't allow to park the car here."
+"Polis saatlerdir trafiği durduruyor mu?","Have the police been stopping the traffic for hours?","Has the police been stopping the traffic for hours?","Have the police been stop the traffic for hours?"
+"Hemşirenin erken çıkması serbestti.","The nurse was allowed to leave early.","The nurse were allowed to leave early.","The nurse was allow to leave early."
+"Bankacı haftalardır para saymıyor.","The banker hasn't been counting money for weeks.","The banker haven't been counting money for weeks.","The banker hasn't been count money for weeks."
+"Pilotun o havada uçağı uçurması yasaktı.","The pilot wasn't allowed to fly the plane in that weather.","The pilot weren't allowed to fly the plane in that weather.","The pilot wasn't allow to fly the plane in that weather."
+"Teknisyen dünden beri modemi tamir ediyor mu?","Has the technician been repairing the modem since yesterday?","Have the technician been repairing the modem since yesterday?","Has the technician been repair the modem since yesterday?"
+"Doktorun hastayı muayene etmesi serbest olacak.","The doctor will be allowed to examine the patient.","The doctor will to be allowed to examine the patient.","The doctor will be allow to examine the patient."
+"Öğrenciler aylardır kitap okumuyor.","The students haven't been reading books for months.","The students hasn't been reading books for months.","The students haven't be reading books for months."
+"Bankacının o parayı alması yasak olacak.","The banker won't be allowed to take that money.","The banker won't allowed to take that money.","The banker won't be allow to take that money."
+"Hemşire iki saattir odayı temizliyor.","The nurse has been cleaning the room for two hours.","The nurse have been cleaning the room for two hours.","The nurse has been clean the room for two hours."
+"Öğrencilerin koridorda beklemesi serbest.","The students are allowed to wait in the corridor.","The students is allowed to wait in the corridor.","The students are allow to wait in the corridor."
+"Avukat günlerdir arabasını satmaya çalışıyor mu?","Has the lawyer been trying to sell his car for days?","Have the lawyer been trying to sell his car for days?","Has the lawyer been try to sell his car for days?"
+"Köpeğin hastaneye girmesi yasak.","The dog isn't allowed to enter the hospital.","The dog aren't allowed to enter the hospital.","The dog isn't allow to enter the hospital."
+"Patron saatlerdir epey çılgın davranıyor.","The boss has been acting quite crazy for hours.","The boss have been acting quite crazy for hours.","The boss has be acting quite crazy for hours."
+"Polisin hastaneyi araması serbest miydi?","Were the police allowed to call the hospital?","Was the police allowed to call the hospital?","Were the police allow to call the hospital?"
+"Şoför günlerdir arabayı yıkamıyor.","The driver hasn't been washing the car for days.","The driver haven't been washing the car for days.","The driver hasn't been wash the car for days."
+"Avukatın şifreyi değiştirmesi serbest olacak mı?","Will the lawyer be allowed to change the password?","Will the lawyer to be allowed to change the password?","Will the lawyer be allow to change the password?"
+"Pilot sabahtan beri uçağı kontrol ediyor.","The pilot has been checking the plane since morning.","The pilot have been checking the plane since morning.","The pilot has been check the plane since morning."
+"Öğretmenin o kitabı okuması serbestti.","The teacher was allowed to read that book.","The teacher were allowed to read that book.","The teacher was allow to read that book."
